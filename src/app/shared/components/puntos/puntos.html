@@ -1,1 +1,167 @@
-<p>puntos works!</p>
+<!--Para Voluntad-->
+@if (modo === 'voluntad') {
+
+  <div class="puntos-root voluntad-root">
+
+    <!-- Permanente -->
+    <div class="voluntad-fila">
+      <button
+        class="dado-btn dado-permanente"
+        [title]="'Tirar Voluntad permanente — ' + voluntadPermanente + ' dados'"
+        (click)="onDadoVolPermanente()"
+      >⚄</button>
+
+      <span class="nombre-label voluntad-label">
+        {{ nombre }} <em>permanente</em>
+      </span>
+
+      <div class="casillas-wrap">
+        @for (activa of casillasVoluntadPerm; track $index) {
+          <span class="casilla casilla-voluntad filled"></span>
+        }
+      </div>
+
+      <span class="valor-texto">{{ voluntadPermanente }}</span>
+    </div>
+
+    <!-- Temporal -->
+    <div class="voluntad-fila">
+      <button
+        class="dado-btn dado-temporal"
+        [class.inactivo]="voluntadTemporal <= 0"
+        [disabled]="voluntadTemporal <= 0"
+        [title]="'Tirar Voluntad temporal — ' + voluntadTemporal + ' dados'"
+        (click)="onDadoVolTemporal()"
+      >⚄</button>
+
+      <span class="nombre-label voluntad-label">
+        {{ nombre }} <em>temporal</em>
+      </span>
+
+      <div class="casillas-wrap">
+        @for (activa of casillaVoluntadTemp; track $index) {
+          <span
+            class="casilla casilla-voluntad"
+            [class.filled]="activa"
+          ></span>
+        }
+      </div>
+
+      <span class="valor-texto">{{ voluntadTemporal }}/{{ voluntadPermanente }}</span>
+    </div>
+
+  </div>
+
+}
+@else if (modo === 'salud') {
+  <!--Para salud-->
+  <div class="puntos-root">
+
+    <span class="nombre-label">{{ nombre }}</span>
+
+    <div class="casillas-wrap">
+      @for (nivel of construirCasillasSalud(); track $index) {
+        <span
+          class="casilla casilla-salud"
+          [class.sano]="nivel === 'sano'"
+          [class.contundente]="nivel === 'contundente'"
+          [class.letal]="nivel === 'letal'"
+          [class.agravado]="nivel === 'agravado'"
+          [title]="nivel"
+        >
+          @if (nivel === 'contundente') { · }
+          @if (nivel === 'letal')       { / }
+          @if (nivel === 'agravado')    { ✕ }
+        </span>
+      }
+    </div>
+
+    <span class="valor-texto salud-texto">
+      {{ capacidad - dannoContundente - dannoLetal - dannoAgravado }}/{{ capacidad }}
+    </span>
+
+  </div>
+
+}
+@else if (modo === 'sangre' && modoNumerico) {
+<!--Si se requiere que el campo sea numérico, (solo aplicable en la tarjeta de personaje, no en la ficha)-->
+  <div class="puntos-root">
+
+    <span class="nombre-label">{{ nombre }}</span>
+
+    <div class="sangre-numerica">
+      <div class="sangre-barra-wrap">
+        <div
+          class="sangre-barra-fill"
+          [style.width.%]="porcentajeElemento"
+        ></div>
+      </div>
+      <span class="valor-texto">{{ valor }}/{{ capacidad }}</span>
+    </div>
+
+  </div>
+
+}
+@else if (modo === 'sangre') {
+  <!--Si el campo debe ser porcentual-->
+  <div class="puntos-root">
+
+    <span class="nombre-label">{{ nombre }}</span>
+
+    <div class="casillas-columna">
+      @for (fila of filasSangre; track $index) {
+        <div class="casillas-wrap">
+          @for (num of fila; track num) {
+            <span
+              class="casilla casilla-sangre"
+              [class.filled]="num <= valor"
+              [class.sobre-max]="num > maximo"
+            ></span>
+          }
+        </div>
+      }
+    </div>
+
+    <span class="valor-texto">{{ valor }}/{{ capacidad }}</span>
+
+  </div>
+
+}
+@else {
+  <!--Para las demás clases-->
+  <div class="puntos-root">
+
+    <!-- Nombre: toggle si aplica -->
+    <button
+      [class]="claseNombre"
+      [title]="toggleable ? 'Añadir a la reserva de dados' : nombre"
+      [disabled]="!toggleable"
+      (click)="onNombreClick()"
+    >
+      {{ nombre }}
+      @if (especializacion) {
+        <em class="especializacion">{{ especializacion }}</em>
+      }
+    </button>
+
+    <!-- Casillas -->
+    <div class="casillas-wrap">
+      @for (c of [].constructor(capacidad); track $index) {
+        <span
+          class="casilla casilla-atributo"
+          [class.filled]="esCasillaPuntos($index)"
+          [class.activa]="esCasillaActiva($index)"
+          [class.sobre-max]="!esCasillaActiva($index)"
+          [class.editable]="editable && esCasillaActiva($index)"
+          [title]="editable && esCasillaActiva($index) ? ($index + 1) + ' puntos' : ''"
+          (click)="onCasillaClick($index)"
+        ></span>
+      }
+    </div>
+
+    <!-- Valor -->
+    <span class="valor-texto">{{ valor }}/{{ maximo }}</span>
+
+  </div>
+
+}

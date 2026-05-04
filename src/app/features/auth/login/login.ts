@@ -25,8 +25,8 @@ export class Login {
 
   onSubmit(): void {
     this.error.set('');
-    if(this.email||this.password) {
-      this.error.set('No ha sido posible ingresar sesión, El abrazo ha fallado. Código de error: '+this.codSitio+"-01");
+    if(!this.email||!this.password) {
+      this.error.set('Preséntate correctamente ante el Príncipe, no has ingresado todos los campos.');
       return;
     }
     this.cargando.set(true);
@@ -34,15 +34,17 @@ export class Login {
     this.authService.login(this.email, this.password).subscribe({
       next :(respuesta) => {
         this.cargando.set(false);
+
         //Se realiza redirección dependiendo del rol del usuario
-        this.redirigirPorRol(respuesta.usuario.rol);
+        this.redirigirPorRol(respuesta.user.role);
       },
       error : (err) => {
         this.cargando.set(false);
         if(err.status == 401){
-          this.error.set('Credenciales inválidas, asegúrate de haberte presentado ante el Príncipe antes de entrar.');
+          this.error.set('Credenciales inválidas, no se permitirá el paso al eliseo a nadie sin la identificación adecuada.');
         } else {
           this.error.set('El elíseo permanece cerrado. Código de error: '+this.codSitio+'-02');
+          console.log(err);
         }
       }
     })

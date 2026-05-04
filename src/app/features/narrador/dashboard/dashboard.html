@@ -1,1 +1,450 @@
-<p>dashboard works!</p>
+<!-- ═══════════════════════════════════════════════════════════════════════
+     DASHBOARD — El Umbral WoD
+     Layout: header · (sidebar | main | panel-narrador) · footer-dificultad
+     ═══════════════════════════════════════════════════════════════════════ -->
+
+<div class="dash-root" [class.panel-oculto]="!panelNarradorVisible()">
+
+  <!-- ══ HEADER ══════════════════════════════════════════════════════════════ -->
+  <header class="dash-header">
+
+    <div class="header-brand">
+      <span class="brand-symbol">⬡</span>
+      <span class="brand-name">El Umbral</span>
+    </div>
+
+    <!-- Barra colapsable de iniciativa (pulsar para expandir) -->
+    <button
+      class="initiative-toggle"
+      [class.active]="iniciativaAbierta()"
+      (click)="abrirDesplegable('iniciativa')"
+      title="Iniciativa"
+    >
+      <span class="init-label">Iniciativa</span>
+      <span class="init-preview">
+        <!-- Preview compacto del orden actual -->
+        <span class="init-chip">Karim 12</span>
+        <span class="init-chip">Guardia 9</span>
+        <span class="init-chip active-chip">Elise 8</span>
+        <span class="init-chip">Ashford 5</span>
+      </span>
+      <span class="drawer-arrow" [class.open]="iniciativaAbierta()">▾</span>
+    </button>
+
+    <div class="header-meta">
+      <span class="session-indicator" [class.activa]="sesionActiva()">
+        <span class="session-dot"></span>
+        {{ sesionNombre() }}
+      </span>
+      <span class="header-usuario">{{ usuario()?.name }}</span>
+      <button class="logout-btn" (click)="logout()" title="Cerrar sesión">×</button>
+    </div>
+
+  </header>
+
+  <!-- ══ DRAWER: INICIATIVA (se expande desde el header) ═════════════════════ -->
+  <div class="drawer-iniciativa" [class.open]="iniciativaAbierta()">
+    <div class="drawer-inner">
+
+      <div class="init-fase">
+        <h3 class="fase-titulo declaracion">1 · Declaración <small>lentos → rápidos</small></h3>
+        <div class="init-lista">
+          <div class="init-slot done">
+            <span class="slot-num">5</span>
+            <span class="slot-nombre">Ashford</span>
+            <span class="slot-tipo pj">PJ</span>
+            <span class="slot-estado">declaró ✓</span>
+          </div>
+          <div class="init-slot done">
+            <span class="slot-num">8</span>
+            <span class="slot-nombre">Elise</span>
+            <span class="slot-tipo pj">PJ</span>
+            <span class="slot-estado">declaró ✓</span>
+          </div>
+          <div class="init-slot done">
+            <span class="slot-num">9</span>
+            <span class="slot-nombre">Guardia del Elíseo</span>
+            <span class="slot-tipo npc">NPC</span>
+            <span class="slot-estado">declaró ✓</span>
+          </div>
+          <div class="init-slot current">
+            <span class="slot-num">12</span>
+            <span class="slot-nombre">Karim</span>
+            <span class="slot-tipo pj">PJ</span>
+            <span class="slot-estado pendiente">pendiente…</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="init-divisor"></div>
+
+      <div class="init-fase">
+        <h3 class="fase-titulo resolucion">2 · Resolución <small>rápidos → lentos</small></h3>
+        <div class="init-lista">
+          <div class="init-slot">
+            <span class="slot-num">12</span>
+            <span class="slot-nombre">Karim</span>
+            <span class="slot-tipo pj">PJ</span>
+          </div>
+          <div class="init-slot">
+            <span class="slot-num">9</span>
+            <span class="slot-nombre">Guardia del Elíseo</span>
+            <span class="slot-tipo npc">NPC</span>
+          </div>
+          <div class="init-slot">
+            <span class="slot-num">8</span>
+            <span class="slot-nombre">Elise</span>
+            <span class="slot-tipo pj">PJ</span>
+          </div>
+          <div class="init-slot">
+            <span class="slot-num">5</span>
+            <span class="slot-nombre">Ashford</span>
+            <span class="slot-tipo pj">PJ</span>
+          </div>
+        </div>
+      </div>
+
+      @if (esNarrador()) {
+        <div class="init-acciones">
+          <button class="btn-accion">+ Añadir NPC</button>
+          <button class="btn-accion">Siguiente turno →</button>
+          <button class="btn-accion btn-reset">Reiniciar</button>
+        </div>
+      }
+
+    </div>
+    <button class="drawer-close" (click)="cerrarDesplegable()">cerrar ▴</button>
+  </div>
+
+  <!-- ══ CUERPO PRINCIPAL ════════════════════════════════════════════════════ -->
+  <div class="dash-body">
+
+    <!-- ── SIDEBAR ─────────────────────────────────────────────────────────── -->
+    <aside class="dash-sidebar">
+      @for (item of SIDEBAR_ITEMS; track item.id) {
+        <button
+          class="sidebar-btn"
+          [class.activo]="seccionActiva() === item.id"
+          [title]="item.label"
+          (click)="irA(item.id)"
+        >
+          <span class="sidebar-icono">{{ item.icono }}</span>
+          <span class="sidebar-label">{{ item.label }}</span>
+        </button>
+      }
+
+      <div class="sidebar-spacer"></div>
+
+      @if (esNarrador()) {
+        <button
+          class="sidebar-btn narrador-toggle"
+          [class.activo]="panelNarradorVisible()"
+          title="Panel narrador"
+          (click)="togglePanelNarrador()"
+        >
+          <span class="sidebar-icono">◧</span>
+          <span class="sidebar-label">Narrador</span>
+        </button>
+      }
+    </aside>
+
+    <!-- ── MAIN: COTERIE ───────────────────────────────────────────────────── -->
+    <main class="dash-main">
+
+      <!-- Cabecera de sección -->
+      <div class="seccion-header">
+        <span class="seccion-titulo">Coterie activa</span>
+        <span class="seccion-meta">{{ coterie().length }} vástagos</span>
+      </div>
+
+      <!-- Grid de tarjetas -->
+      <div class="coterie-grid">
+        @for (pj of coterie(); track pj.id) {
+          <!-- La tarjeta es un botón accesible que abre el sheet -->
+          <button
+            class="pj-card"
+            [class.critico]="tieneEstadoCritico(pj)"
+            [class.offline]="pj.presencia === 'offline'"
+            (click)="abrirSheet(pj)"
+            [attr.aria-label]="'Ver ficha de ' + pj.nombre"
+          >
+            <!-- Indicador de presencia -->
+            <span class="presencia-dot" [class]="pj.presencia"></span>
+
+            <!-- Identificación -->
+            <div class="pj-identidad">
+              <span class="pj-nombre">{{ pj.nombre }}</span>
+              <span class="pj-clan">{{ pj.clan }} · Gen. {{ pj.generacion }}</span>
+            </div>
+
+            <!-- Barras de recursos -->
+            <div class="pj-recursos">
+              <div class="recurso-row">
+                <span class="recurso-label">Salud</span>
+                <div class="recurso-track">
+                  <div
+                    class="recurso-fill salud"
+                    [style.width.%]="porcentaje(pj.saludActual, pj.saludMax)"
+                    [class.critico]="pj.saludActual <= 2"
+                  ></div>
+                </div>
+                <span class="recurso-valor">{{ pj.saludActual }}/{{ pj.saludMax }}</span>
+              </div>
+
+              <div class="recurso-row">
+                <span class="recurso-label">Voluntad</span>
+                <div class="recurso-track">
+                  <div
+                    class="recurso-fill voluntad"
+                    [style.width.%]="porcentaje(pj.voluntadActual, pj.voluntadMax)"
+                    [class.critico]="pj.voluntadActual <= 1"
+                  ></div>
+                </div>
+                <span class="recurso-valor">{{ pj.voluntadActual }}/{{ pj.voluntadMax }}</span>
+              </div>
+
+              <div class="recurso-row">
+                <span class="recurso-label">Sangre</span>
+                <div class="recurso-track">
+                  <div
+                    class="recurso-fill sangre"
+                    [style.width.%]="porcentaje(pj.sangreActual, pj.sangreMax)"
+                    [class.critico]="pj.sangreActual <= 2"
+                  ></div>
+                </div>
+                <span class="recurso-valor">{{ pj.sangreActual }}/{{ pj.sangreMax }}</span>
+              </div>
+            </div>
+
+            <!-- Estados especiales -->
+            @if (pj.estados.length > 0) {
+              <div class="pj-estados">
+                @for (estado of pj.estados; track estado) {
+                  <span class="estado-badge" [class]="'estado-' + estado">
+                    {{ estado }}
+                  </span>
+                }
+              </div>
+            }
+
+            <!-- Penalizaciones -->
+            @if (pj.penalizaciones > 0) {
+              <div class="pj-penalizacion">
+                −{{ pj.penalizaciones }} dado{{ pj.penalizaciones > 1 ? 's' : '' }}
+              </div>
+            }
+
+          </button>
+        }
+      </div>
+
+      <!-- Notas de sesión (solo narrador) -->
+      @if (esNarrador()) {
+        <div class="notas-seccion">
+          <div class="seccion-header">
+            <span class="seccion-titulo">Notas de sesión</span>
+          </div>
+          <textarea
+            class="notas-area"
+            placeholder="Apuntes del narrador… lo que la noche te dicte."
+            [value]="notasSesion()"
+            (input)="actualizarNotas($event)"
+          ></textarea>
+        </div>
+      }
+
+    </main>
+
+    <!-- ── PANEL NARRADOR (derecha, solo maestros) ─────────────────────────── -->
+    @if (esNarrador() && panelNarradorVisible()) {
+      <aside class="panel-narrador">
+
+        <!-- Escena activa -->
+        <div class="panel-seccion">
+          <div class="panel-titulo">Escena activa</div>
+          <div class="escena-box">
+            <div class="escena-nombre">{{ escenaActiva().nombre }}</div>
+            <div class="escena-desc">{{ escenaActiva().descripcion }}</div>
+            <div class="escena-turno">Turno {{ escenaActiva().turno }}</div>
+          </div>
+          <button class="btn-panel">Cambiar escena</button>
+        </div>
+
+        <!-- Pool de NPCs -->
+        <div class="panel-seccion">
+          <div class="panel-titulo">NPCs activos</div>
+          <div class="npc-lista">
+            <div class="npc-item">
+              <span class="npc-nombre">Guardia del Elíseo</span>
+              <span class="npc-tipo">Ghoul</span>
+            </div>
+            <div class="npc-item">
+              <span class="npc-nombre">Primogénito Ventrue</span>
+              <span class="npc-tipo">Vástago</span>
+            </div>
+          </div>
+          <button class="btn-panel">+ Añadir NPC</button>
+        </div>
+
+        <!-- Macros rápidas -->
+        <div class="panel-seccion">
+          <div class="panel-titulo">Macros rápidas</div>
+          <div class="macros-lista">
+            <button class="macro-btn">Drenar 1 sangre (grupo)</button>
+            <button class="macro-btn">−1 dado (grupo)</button>
+            <button class="macro-btn">Activar frenesí</button>
+          </div>
+        </div>
+
+      </aside>
+    }
+
+  </div><!-- /dash-body -->
+
+  <!-- ══ FOOTER: DIFICULTAD ══════════════════════════════════════════════════ -->
+  <footer class="dash-footer">
+
+    <button
+      class="dificultad-toggle"
+      [class.active]="dificultadAbierta()"
+      (click)="abrirDesplegable('dificultad')"
+    >
+      <span class="dif-label">Dificultad</span>
+      <span
+        class="dif-valor"
+        [class.alta]="dificultad() >= 7"
+        [class.media]="dificultad() >= 5 && dificultad() < 7"
+        [class.baja]="dificultad() < 5"
+      >{{ dificultad() }}</span>
+      <span class="dif-etiqueta">{{ etiquetaDificultad() }}</span>
+      <span class="drawer-arrow" [class.open]="dificultadAbierta()">▴</span>
+    </button>
+
+    <!-- Drawer de dificultad (se expande hacia arriba desde el footer) -->
+    @if (dificultadAbierta()) {
+      <div class="drawer-dificultad">
+
+        <div class="diff-control">
+          <div class="diff-valor-grande"
+               [class.alta]="dificultad() >= 7"
+               [class.media]="dificultad() >= 5 && dificultad() < 7"
+               [class.baja]="dificultad() < 5"
+          >
+            {{ dificultad() }}
+          </div>
+          <div class="diff-etiqueta-grande">{{ etiquetaDificultad() }}</div>
+        </div>
+
+        <!-- Slider — solo maestros pueden moverlo -->
+        <div class="diff-slider-wrap">
+          @if (esNarrador()) {
+            <span class="diff-min">1</span>
+            <input
+              type="range"
+              class="diff-slider"
+              min="1" max="10" step="1"
+              [value]="dificultad()"
+              (input)="setDificultad($event)"
+            />
+            <span class="diff-max">10</span>
+          } @else {
+            <!-- Jugador: solo ve el valor, no puede moverlo -->
+            <div class="diff-readonly">
+              El narrador ha fijado la dificultad en {{ dificultad() }}.
+            </div>
+          }
+        </div>
+
+        @if (esNarrador()) {
+          <label class="diff-visibilidad">
+            <input
+              type="checkbox"
+              [checked]="dificultadVisible()"
+              (change)="toggleDificultadVisible()"
+            />
+            Visible para los jugadores
+          </label>
+        }
+
+      </div>
+    }
+
+  </footer>
+
+</div><!-- /dash-root -->
+
+<!-- ══ BOTTOM SHEET: FICHA COMPLETA ════════════════════════════════════════════
+     Overlay + sheet que se desliza desde abajo.
+     El fondo del dashboard permanece visible.
+═══════════════════════════════════════════════════════════════════════════════ -->
+@if (personajeSeleccionado()) {
+  <div
+    class="sheet-overlay"
+    [class.visible]="sheetVisible()"
+    (click)="cerrarSheet()"
+  >
+    <div
+      class="sheet-panel"
+      [class.visible]="sheetVisible()"
+      (click)="$event.stopPropagation()"
+      role="dialog"
+      [attr.aria-label]="'Ficha de ' + personajeSeleccionado()!.nombre"
+    >
+      <!-- Handle de arrastre -->
+      <div class="sheet-handle"></div>
+
+      <!-- Cabecera del personaje -->
+      <div class="sheet-header">
+        <div class="sheet-avatar">
+          {{ iniciales(personajeSeleccionado()!.nombre) }}
+        </div>
+        <div class="sheet-identidad">
+          <h2 class="sheet-nombre">{{ personajeSeleccionado()!.nombre }}</h2>
+          <p class="sheet-meta">
+            {{ personajeSeleccionado()!.clan }} ·
+            Generación {{ personajeSeleccionado()!.generacion }} ·
+            Sire: {{ personajeSeleccionado()!.sire }}
+          </p>
+        </div>
+        <button class="sheet-close" (click)="cerrarSheet()">×</button>
+      </div>
+
+      <!-- Recursos principales en 3 columnas -->
+      <div class="sheet-stats">
+        <div class="stat-card">
+          <div class="stat-val salud-val">
+            {{ personajeSeleccionado()!.saludActual }}/{{ personajeSeleccionado()!.saludMax }}
+          </div>
+          <div class="stat-lbl">Salud</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val voluntad-val">
+            {{ personajeSeleccionado()!.voluntadActual }}/{{ personajeSeleccionado()!.voluntadMax }}
+          </div>
+          <div class="stat-lbl">Voluntad</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val sangre-val">
+            {{ personajeSeleccionado()!.sangreActual }}/{{ personajeSeleccionado()!.sangreMax }}
+          </div>
+          <div class="stat-lbl">Sangre</div>
+        </div>
+      </div>
+
+      <!-- Estados activos -->
+      @if (personajeSeleccionado()!.estados.length > 0) {
+        <div class="sheet-estados">
+          @for (estado of personajeSeleccionado()!.estados; track estado) {
+            <span class="estado-badge" [class]="'estado-' + estado">{{ estado }}</span>
+          }
+        </div>
+      }
+
+      <!-- Pie: hint de navegación -->
+      <p class="sheet-footer-hint">
+        Toca fuera para cerrar · Desliza hacia abajo para ver la ficha completa
+      </p>
+
+    </div>
+  </div>
+}

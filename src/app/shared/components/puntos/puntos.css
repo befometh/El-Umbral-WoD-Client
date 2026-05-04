@@ -1,0 +1,342 @@
+/* puntos.css */
+
+/* ─── Variables ──────────────────────────────────────────────────────────────*/
+:host {
+  --clr-dot-border:    rgba(61, 31, 15, 0.6);
+  --clr-dot-fill:      #c8784a;
+  --clr-dot-empty:     transparent;
+  --clr-sobre-max:     rgba(61, 31, 15, 0.2);
+
+  --clr-salud-border:      rgba(139, 42, 42, 0.4);
+  --clr-contundente-fill:  rgba(139, 106, 42, 0.25);
+  --clr-contundente-color: #8b6a2a;
+  --clr-letal-fill:        rgba(139, 42, 42, 0.25);
+  --clr-letal-color:       #8b2a2a;
+  --clr-agravado-fill:     rgba(90, 16, 16, 0.4);
+  --clr-agravado-color:    #5a1010;
+
+  --clr-voluntad-fill:  #2a4a8b;
+  --clr-voluntad-borde: rgba(42, 74, 139, 0.45);
+
+  --clr-sangre-fill:   #c8784a;
+  --clr-sangre-borde:  rgba(200, 120, 74, 0.45);
+
+  --clr-sel1-texto:  #c8a04a;
+  --clr-sel1-bg:     rgba(139, 106, 42, 0.15);
+  --clr-sel1-borde:  rgba(139, 106, 42, 0.5);
+
+  --clr-sel2-texto:  #4a8b4a;
+  --clr-sel2-bg:     rgba(42, 90, 42, 0.15);
+  --clr-sel2-borde:  rgba(42, 90, 42, 0.5);
+
+  --font-display: 'Cinzel', serif;
+  --font-body:    'Cormorant Garamond', Georgia, serif;
+
+  display: block;
+}
+
+/* ─── Keyframes ──────────────────────────────────────────────────────────────*/
+@keyframes dado-pulso {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.15); }
+}
+
+/* ─── Raíz ───────────────────────────────────────────────────────────────────*/
+.puntos-root {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 0;
+  min-height: 24px;
+}
+
+/* ─── Nombre / Label ─────────────────────────────────────────────────────────*/
+.nombre-label {
+  font-family: var(--font-display), serif;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #7a4a32;
+  white-space: nowrap;
+  min-width: 90px;
+  flex-shrink: 0;
+
+  /* Reset de botón */
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 2px 6px;
+  cursor: default;
+  text-align: left;
+  border-radius: 2px;
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+
+/* Con toggle activo */
+.nombre-label.toggleable {
+  cursor: pointer;
+}
+
+.nombre-label.toggleable:hover {
+  color: #d4a07a;
+  border-color: rgba(61, 31, 15, 0.4);
+}
+
+.nombre-label.toggleable:disabled {
+  cursor: default;
+}
+
+/* Estado espera — sin selección */
+.nombre-label.estado-espera {
+  color: #7a4a32;
+}
+
+/* Estado sel1 — primera selección (ámbar) */
+.nombre-label.estado-sel1 {
+  color: var(--clr-sel1-texto);
+  background: var(--clr-sel1-bg);
+  border-color: var(--clr-sel1-borde);
+}
+
+/* Estado sel2 — segunda selección (verde) */
+.nombre-label.estado-sel2 {
+  color: var(--clr-sel2-texto);
+  background: var(--clr-sel2-bg);
+  border-color: var(--clr-sel2-borde);
+}
+
+/* Especialización en itálica dentro del nombre */
+.especializacion {
+  font-family: var(--font-body), serif;
+  font-size: 10px;
+  font-style: italic;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #5c3d22;
+  margin-left: 4px;
+}
+
+/* ─── Wrap de casillas ───────────────────────────────────────────────────────*/
+.casillas-wrap {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.casillas-columna {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* ─── Casilla base ───────────────────────────────────────────────────────────*/
+.casilla {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1px solid var(--clr-dot-border);
+  background: var(--clr-dot-empty);
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s;
+  user-select: none;
+}
+
+/* ─── Casilla: modos estándar (atributo, habilidad, disciplina, virtud, trasfondo) ──*/
+.casilla-atributo {
+  border-color: rgba(61, 31, 15, 0.5);
+  cursor: default;
+}
+
+.casilla-atributo.filled {
+  background: var(--clr-dot-fill);
+  border-color: var(--clr-dot-fill);
+}
+
+/* Casillas más allá del máximo permitido por el servidor */
+.casilla-atributo.sobre-max {
+  border-color: var(--clr-sobre-max);
+  opacity: 0.25;
+}
+
+/* Casillas editables */
+.casilla-atributo.editable {
+  cursor: pointer;
+}
+
+.casilla-atributo.editable:hover {
+  border-color: #c8784a;
+  background: rgba(200, 120, 74, 0.25);
+}
+
+/* ─── Casilla: salud (cuadradas para el tracker de daño) ─────────────────────*/
+.casilla-salud {
+  border-radius: 2px;
+  width: 14px;
+  height: 14px;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  color: transparent;
+  border-color: rgba(61, 31, 15, 0.4);
+}
+
+.casilla-salud.sano {
+  background: transparent;
+  border-color: rgba(61, 31, 15, 0.35);
+}
+
+.casilla-salud.contundente {
+  background: var(--clr-contundente-fill);
+  border-color: var(--clr-contundente-color);
+  color: var(--clr-contundente-color);
+}
+
+.casilla-salud.letal {
+  background: var(--clr-letal-fill);
+  border-color: var(--clr-letal-color);
+  color: var(--clr-letal-color);
+}
+
+.casilla-salud.agravado {
+  background: var(--clr-agravado-fill);
+  border-color: var(--clr-agravado-color);
+  color: var(--clr-agravado-color);
+}
+
+/* ─── Casilla: voluntad ──────────────────────────────────────────────────────*/
+.casilla-voluntad {
+  border-color: var(--clr-voluntad-borde);
+  background: transparent;
+}
+
+.casilla-voluntad.filled {
+  background: var(--clr-voluntad-fill);
+  border-color: var(--clr-voluntad-fill);
+}
+
+/* ─── Casilla: sangre ────────────────────────────────────────────────────────*/
+.casilla-sangre {
+  border-color: var(--clr-sangre-borde);
+  background: transparent;
+}
+
+.casilla-sangre.filled {
+  background: var(--clr-sangre-fill);
+  border-color: var(--clr-sangre-fill);
+}
+
+.casilla-sangre.sobre-max {
+  border-color: rgba(61, 31, 15, 0.2);
+  opacity: 0.2;
+}
+
+/* ─── Valor numérico ─────────────────────────────────────────────────────────*/
+.valor-texto {
+  font-family: var(--font-display);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: #5c3d22;
+  min-width: 28px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.salud-texto {
+  color: #8b2a2a;
+}
+
+/* ─── MODO VOLUNTAD ──────────────────────────────────────────────────────────*/
+.voluntad-root {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.voluntad-fila {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.voluntad-label {
+  min-width: 120px;
+  font-size: 8px;
+}
+
+.voluntad-label em {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-style: italic;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #5c3d22;
+  margin-left: 4px;
+}
+
+/* ─── Dados ──────────────────────────────────────────────────────────────────*/
+.dado-btn {
+  background: transparent;
+  border: 1px solid var(--clr-voluntad-borde);
+  color: #3a5a9b;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  transition: color 0.2s, border-color 0.2s, background 0.2s, transform 0.1s;
+}
+
+.dado-permanente:hover {
+  background: rgba(42, 74, 139, 0.12);
+  border-color: #2a4a8b;
+  color: #5a7acb;
+  animation: dado-pulso 0.4s ease;
+}
+
+.dado-temporal:hover:not(:disabled) {
+  background: rgba(42, 74, 139, 0.1);
+  border-color: #2a4a8b;
+  color: #5a7acb;
+  animation: dado-pulso 0.4s ease;
+}
+
+.dado-btn:active:not(:disabled) {
+  transform: scale(0.9);
+}
+
+.dado-btn.inactivo {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+/* ─── MODO SANGRE numérico ───────────────────────────────────────────────────*/
+.sangre-numerica {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.sangre-barra-wrap {
+  flex: 1;
+  height: 4px;
+  background: rgba(61, 31, 15, 0.3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.sangre-barra-fill {
+  height: 100%;
+  background: var(--clr-sangre-fill);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}

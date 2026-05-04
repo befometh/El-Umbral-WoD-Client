@@ -9,9 +9,9 @@ import {environment} from '../../../environments/environment';
 
 export interface Usuario {
   id: number;
-  nombre: string;
+  name: string;
   email: string;
-  rol: RolUsuario;
+  role: RolUsuario;
 }
 
 // Roles temáticos mapeados a valores numéricos (igual que el backend)
@@ -25,7 +25,7 @@ export enum RolUsuario {
 interface LoginResponse {
   success: boolean;
   token: string;
-  usuario: Usuario;
+  user: Usuario;
 }
 
 // ─── Servicio ─────────────────────────────────────────────────────────────────
@@ -42,12 +42,15 @@ export class AuthService {
   estaAutenticado = computed(() => this.usuarioActual() !== null);
 
   // Computed de rol: facilita los guards y los *ngIf en templates
-  esAntediluviano = computed(() => this.usuarioActual()?.rol === RolUsuario.Antediluviano);
-  esMatusalen = computed(() => this.usuarioActual()?.rol === RolUsuario.Matusalen);
-  esMaestro = computed(() =>
-    this.usuarioActual()?.rol === RolUsuario.Antediluviano ||
-    this.usuarioActual()?.rol === RolUsuario.Matusalen
+  esAntediluviano = computed(() => this.usuarioActual()?.role === RolUsuario.Antediluviano);
+  esMatusalen = computed(() => this.usuarioActual()?.role === RolUsuario.Matusalen);
+  esNarrador = computed(() =>
+    this.usuarioActual()?.role === RolUsuario.Antediluviano ||
+    this.usuarioActual()?.role === RolUsuario.Matusalen
   );
+  esVastago = computed(()=>this.usuarioActual()?.role === RolUsuario.Vastago);
+  esGhoul = computed(()=>this.usuarioActual()?.role === RolUsuario.Ghoul);
+
 
   constructor(private http: HttpClient, private router: Router) {
   }
@@ -56,11 +59,11 @@ export class AuthService {
 
   login(email: string, password: string): Observable<LoginResponse> {
     return this.http
-      .post<LoginResponse>(`${this.API}/auth/login`, {email, password})
+      .post<LoginResponse>(`${this.API}/login`, {email, password})
       .pipe(
         tap(respuesta => {
           if (respuesta.success) {
-            this.guardarSesion(respuesta.token, respuesta.usuario);
+            this.guardarSesion(respuesta.token, respuesta.user);
           }
         })
       );
@@ -106,7 +109,9 @@ export class AuthService {
 
   private cargarUsuarioGuardado(): Usuario | null {
     const datos = localStorage.getItem(this.USUARIO_KEY);
-    if (!datos) return null;
+    if (!datos) {
+      return null;
+    }
 
     try {
       return JSON.parse(datos) as Usuario;
