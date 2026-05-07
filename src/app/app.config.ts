@@ -12,7 +12,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withInterceptors([jwtInterceptor]) //Para utilizar el interceptor en la carpeta Core:JWT
     )
-    //provideRouter(routes, withDebugTracing())
+    //provideRouter(routes, withDebugTracing()) --DEBUG de redirección
   ]
 
 };

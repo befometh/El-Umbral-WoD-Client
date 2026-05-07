@@ -1,431 +1,198 @@
-<main id="ficha" class="grid grid-cols-5  min-h-screen p-4">
-  <section id="datos-basicos" class="bg-red-300 p-4 rounded-lg">
-    prueba1
-  </section>
-  <section id="mecanicas" class="col-span-3 m-10 border-1 border-black">
-    <h1 class="text-2xl text-center">Atributos</h1>
-    <article id="atributos" class="col-span-12 grid grid-cols-3">
-      <div id="fisicos">
-        <!--ATRIBUTOS-->
-        <h2 class="text-center">Físicos</h2>
-        <app-puntos
-          nombre="fuerza"
-          modo="atributo"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('fuerza')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="destreza"
-          modo="atributo"
-          [valor]="2"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('destreza')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="resistencia"
-          modo="atributo"
-          [valor]="1"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('resistencia')"
-          (toggleClic)="onToggle($event)"
-        />
+<main id="ficha" class="grid grid-cols-5 h-screen overflow-hidden p-1">
+
+  <!-- Sección: Panel izquierdo -->
+  <aside id="datos-basicos" class="datos-basicos-root h-full overflow-hidden">
+
+    <!--  Nombre del personaje  -->
+    <div class="campo-grupo">
+      <span class="campo-label">Nombre</span>
+      <div class="campo-valor">{{ personaje()?.nombre ?? '—' }}</div>
+    </div>
+
+    <!--  Foto del personaje  -->
+    <div class="foto-marco">
+      <div class="foto-borde-ornamental">
+        @if (personaje()?.foto) {
+          <img
+            class="foto-img"
+            [src]="personaje()!.foto"
+            [alt]="personaje()!.nombre"
+          />
+        } @else {
+          <div class="foto-placeholder">
+            <span class="foto-iniciales">{{ iniciales() }}</span>
+          </div>
+        }
       </div>
-      <div id='sociales'>
-        <h2 class="text-center">Sociales</h2>
-        <app-puntos
-          nombre="carisma"
-          modo="atributo"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('carisma')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="manipulacion"
-          modo="atributo"
-          [valor]="2"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('manipulacion')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="apariencia"
-          modo="atributo"
-          [valor]="1"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('apariencia')"
-          (toggleClic)="onToggle($event)"
-        />
+    </div>
+
+    <!--  Info básica siempre visible  -->
+    <div class="campo-grupo">
+      <span class="campo-label">Clan</span>
+      <div class="campo-valor">{{ personaje()?.clan ?? '—' }}</div>
+    </div>
+
+    <!--  Desplegable: info adicional  -->
+    <button
+      class="desplegable-toggle"
+      (click)="toggleInfoAdicional()"
+      [attr.aria-expanded]="infoAdicionalVisible()"
+    >
+      <span>{{ infoAdicionalVisible() ? 'Ocultar detalles' : 'Ver detalles' }}</span>
+      <span class="desplegable-arrow" [class.abierto]="infoAdicionalVisible()">▾</span>
+    </button>
+
+    @if (infoAdicionalVisible()) {
+      <div class="info-adicional">
+
+        <div class="campo-grupo">
+          <span class="campo-label">Naturaleza</span>
+          <div class="campo-valor">{{ personaje()?.naturaleza ?? '—' }}</div>
+        </div>
+
+        <div class="campo-grupo">
+          <span class="campo-label">Conducta</span>
+          <div class="campo-valor">{{ personaje()?.conducta ?? '—' }}</div>
+        </div>
+
+        <div class="campo-grupo">
+          <span class="campo-label">Sire</span>
+          <div class="campo-valor">{{ personaje()?.sire ?? '—' }}</div>
+        </div>
+
+        <div class="campo-grupo">
+          <span class="campo-label">Jugador</span>
+          <div class="campo-valor">{{ personaje()?.jugadorNombre ?? '—' }}</div>
+        </div>
+
+        <div class="campo-grupo">
+          <span class="campo-label">Generación</span>
+          <div class="campo-valor">{{ personaje()?.generacion ?? '—' }}</div>
+        </div>
+
       </div>
-      <div id='mentales'>
-        <h2 class="text-center">Mentales</h2>
-        <app-puntos
-          nombre="percepcion"
-          modo="atributo"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('percepcion')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="inteligencia"
-          modo="atributo"
-          [valor]="2"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('inteligencia')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="astucia"
-          modo="atributo"
-          [valor]="1"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('astucia')"
-          (toggleClic)="onToggle($event)"
-        />
-      </div>
+    }
+
+    <!--  Divisor  -->
+    <div class="divisor">
+      <div class="divisor-linea"></div>
+      <div class="divisor-rombo"></div>
+      <div class="divisor-linea"></div>
+    </div>
+
+    <!--  Fuerza de Voluntad  -->
+    <div class="recurso-bloque">
+      <span class="recurso-titulo">Fuerza de Voluntad</span>
+      <app-puntos
+        nombre="Voluntad"
+        modo="voluntad"
+        [voluntadPermanente]="personaje()?.voluntadPermanente ?? 0"
+        [voluntadTemporal]="personaje()?.voluntadTemporal ?? 0"
+        (tirarPermanente)="onTirarVoluntad($event)"
+        (tirarTemporal)="onTirarVoluntad($event)"
+      />
+    </div>
+
+    <!--  Puntos de Sangre  -->
+    <div class="recurso-bloque">
+      <span class="recurso-titulo">Puntos de Sangre</span>
+      <!-- forzamos modoNumerico=false pasando capacidad real sin importar el valor
+           el componente mostrará bolitas si capacidad <= 10, barra si > 10       -->
+      <app-puntos
+        nombre="Sangre"
+        modo="sangre"
+        [valor]="personaje()?.sangreActual ?? 0"
+        [maximo]="personaje()?.sangreMax ?? 10"
+        [capacidad]="personaje()?.sangreMax ?? 10"
+      />
+    </div>
+
+    <!--  Salud -->
+    <div class="recurso-bloque">
+      <span class="recurso-titulo">Salud</span>
+      <app-puntos
+        nombre="Salud"
+        modo="salud"
+        [capacidad]="personaje()?.saludMax ?? 7"
+        [dannoContundente]="personaje()?.dannoContundente ?? 0"
+        [dannoLetal]="personaje()?.dannoLetal ?? 0"
+        [dannoAgravado]="personaje()?.dannoAgravado ?? 0"
+      />
+    </div>
+
+  </aside>
+  <!-- Sección de mecánicas -->
+  <section id="mecanicas" class="col-span-3 bg-yellow-50">
+    <h2 class="text-2xl text-center pt-10">Atributos</h2>
+    <article class="col-span-3 grid grid-cols-3 pt-5">
+      @for (grupo of atributos; track grupo.tipo) {
+
+        <div id="{{grupo.tipo}}Div">
+          <h3 class="campo-label text-lg text-center">{{ grupo.tipo }}</h3>
+          @for (atributo of grupo.lista; track atributo) {
+            <app-puntos
+              [nombre]="atributo"
+              modo="atributo"
+              [valor]="0"
+              [maximo]="5"
+              [capacidad]="5"
+              [toggleable]="true"
+              [estadoToggle]="getEstadoToggle(atributo)"
+              (toggleClic)="onToggle($event)"
+              [editable]="edicion"
+            />
+          }
+        </div>
+      }
     </article>
+    <div class="border-t border-gray-300 my-4"></div>
+
     <!--HABILIDADES-->
-    <h1 class="text-center text-2xl">Habilidades</h1>
-    <article id="habilidades" class="col-span-12 grid grid-cols-3">
-      <!--Talentos-->
-      <div id="talentos">
-        <h2 class="text-center">Talentos</h2>
-        <app-puntos
-          nombre="alerta"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('alerta')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="atletismo"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('atletismo')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="callejeo"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('callejeo')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="consciencia"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('consciencia')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="empatia"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('empatia')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="expresion"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('expresion')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="intimidacion"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('intimidacion')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="liderazgo"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('liderazgo')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="pelea"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('pelea')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="subterfugio"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('subterfugio')"
-          (toggleClic)="onToggle($event)"
-        />
-      <!--Técnicas-->
-      </div><div id="tecnicas">
-        <h2 class="text-center">Técnicas</h2>
-        <app-puntos
-          nombre="armas de fuego"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('armas de fuego')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="artesania"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('artesania')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="conducir"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('conducir')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="etiqueta"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('etiqueta')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="interpretacion"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('interpretacion')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="latrocinio"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('latrocinio')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="pelea con armas"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('pelea con armas')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="sigilo"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('sigilo')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="supervivencia"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('supervivencia')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="trato con animales"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('trato con animales')"
-          (toggleClic)="onToggle($event)"
-        />
-      </div>
-      <!--Conocimientos-->
-      <div id="conocimientos">
-        <h2 class="text-center">Conocimientos</h2>
-        <app-puntos
-          nombre="academiscismo"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('academiscismo')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="ciencias"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('ciencias')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="finanzas"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('finanzas')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="informatica"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('informatica')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="investigacion"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('investigacion')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="leyes"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('leyes')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="medicina"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('medicina')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="ocultismo"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('ocultismo')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="política"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('política')"
-          (toggleClic)="onToggle($event)"
-        />
-        <app-puntos
-          nombre="tecnologiaa"
-          modo="habilidad"
-          [valor]="3"
-          [maximo]="5"
-          [capacidad]="5"
-          [toggleable]="true"
-          [estadoToggle]="getEstadoToggle('trato con animales')"
-          (toggleClic)="onToggle($event)"
-        />
+    <h2 class="text-2xl text-center pt-10">Habilidades</h2>
+    <article class="col-span-3 grid grid-cols-3 pt-5">
+      @for (grupo of habilidades; track grupo.tipo) {
 
-      </div>
-
+        <div id="{{grupo.tipo}}Div">
+          <h3 class="campo-label text-lg text-center">{{ grupo.tipo }}</h3>
+          @for (habilidad of grupo.lista; track habilidad) {
+            <app-puntos
+              [nombre]="habilidad"
+              modo="habilidad"
+              [valor]="0"
+              [maximo]="5"
+              [capacidad]="5"
+              [toggleable]="true"
+              [estadoToggle]="getEstadoToggle(habilidad)"
+              (toggleClic)="onToggle($event)"
+              [editable]="edicion"
+            />
+          }
+        </div>
+      }
     </article>
-    <article id="adicionales">prueba 6</article>
+    <div class="border-t border-gray-300 my-4"></div>
+    <!--COMPLEMENTOS-->
+    <article id="complementos" class="col-span-3 grid grid-cols-3">
+      @for (grupo of complementos; track grupo.tipo) {
+        <div id="{{grupo.tipo}}">
+          <h3 class="campo-label text-lg text-center">{{ grupo.tipo }}</h3>
+          @for (complemento of grupo.lista; track complemento) {
+            <app-puntos
+              [nombre]="complemento"
+              [modo]="grupo.modo"
+              [valor]="0"
+              [maximo]="5"
+              [capacidad]="5"
+              [toggleable]="true"
+              [estadoToggle]="getEstadoToggle(complemento)"
+              (toggleClic)="onToggle($event)"
+              [editable]="edicion"
+            />
+          }
+        </div>
+      }
+    </article>
   </section>
-  <section id="disciplinas" class="bg-amber-200 p-4 rounded-lg">
-    prueba3
-  </section>
+
+  <section id="poderes" class="bg-black"></section>
 </main>

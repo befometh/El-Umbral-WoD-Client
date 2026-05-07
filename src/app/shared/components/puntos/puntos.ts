@@ -62,7 +62,7 @@ export class Puntos {
   @Output() tirarPermanente = new EventEmitter<number>();
   @Output() tirarTemporal = new EventEmitter<number>();
 
-  //Permite ver en las tarjetas puntos, si es mayor a 10, se refleja en barras porcentuales
+  //Permite ver en las tarjetas puntos, si es mayor a 10, se refleja en barras porcentuales (para tarjetas)
   get modoNumerico(): boolean {
     return this.capacidad > 10;
   }
@@ -104,9 +104,9 @@ export class Puntos {
   /**
    * La estructura de esta función se conforma de la siguiente forma
    * - Más a la derecha están los agravados, el daño más serio y dificil de curar, normalmente causaado por quemaduras por el fuego,
-   *   el sol o ataques sobrenaturales con esta capacidad
+   *   el sol o ataques sobrenaturales específicos
    * - Luego los letales, daños cortantes y heridas abiertas, segundo en la jerarquía
-   * - por último los contundentes.
+   * - por último los contundentes, golpes, magulladuras, aterrizajes mal realizados o atropellamientos, por ejemplo.
    *
    * (A nivel de juego esto tiene importancia porque la curación debe ser en sentido inverso, no puedes curar un letal sin curar un
    * contundente por ejemplo)
@@ -127,11 +127,13 @@ export class Puntos {
     return casillas;
   }
 
+  //Función que entrega utilidad a las alteraciones del nombre al hacer clic, para que se ilumine
   onNombreClick(): void {
     if (!this.toggleable) return;
     this.toggleClic.emit({nombre: this.nombre, valor: this.valor})
   }
 
+  //Función que entrega utilidad a las casillas de salud
   onCasillaClick(indice: number): void {
     if (!this.editable) return;
     if (this.modo === 'salud') return; //Salud tiene su propia lógica
@@ -144,15 +146,18 @@ export class Puntos {
     this.valorCambio.emit(valorProcesado);
   }
 
+  //Tirada de voluntad permanente, (única en su tipo)
   onDadoVolPermanente(){
     this.tirarPermanente.emit(this.voluntadPermanente);
   }
 
+  //Tirada de voluntad temporal, (única en su tipo)
   onDadoVolTemporal(){
     if(this.voluntadTemporal <= 0) return;
     this.tirarTemporal.emit(this.voluntadTemporal);
   }
 
+  //Cambia el estado del toggle para que se vea esa funcionamiento
   get claseNombre():string{
     if (!this.toggleable) return 'nombre-label';
     return `nombre-label toggleable estado-${this.estadoToggle}`
@@ -162,6 +167,7 @@ export class Puntos {
     return `casilla-${this.modo}`;
   }
 
+  //Asegura el tope de las casillas para que no haya sobrepasos
   ngOnChanges():void {
     //Aseguramos que el valor nunca supera al máximo
     if(this.valor > this.maximo){

@@ -37,7 +37,7 @@ export class AuthService {
   private readonly USUARIO_KEY = 'umbral_usuario';
   private readonly API = environment.apiUrl;
 
-  // Signals reactivos — cualquier componente puede suscribirse
+  // Signals reactivos - cualquier componente puede suscribirse
   usuarioActual = signal<Usuario | null>(this.cargarUsuarioGuardado());
   estaAutenticado = computed(() => this.usuarioActual() !== null);
 
@@ -55,7 +55,7 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) {
   }
 
-  // ── Login ──────────────────────────────────────────────────────────────────
+  // Sección: Login
 
   login(email: string, password: string): Observable<LoginResponse> {
     return this.http
@@ -69,8 +69,7 @@ export class AuthService {
       );
   }
 
-  // ── Logout ─────────────────────────────────────────────────────────────────
-
+  // Seccion: Logout (pendiente de implementacion)
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.USUARIO_KEY);
@@ -78,12 +77,15 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  // ── Token ──────────────────────────────────────────────────────────────────
+  //  Token: Cuerpo del JWT
 
   obtenerToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
+  /**
+   * Verifica que el token recibido sea válido como token JWT para evitar filtración de datos
+   */
   tokenValido(): boolean {
     const token = this.obtenerToken();
     if (!token) return false;
@@ -100,7 +102,12 @@ export class AuthService {
   }
 
   // ── Helpers privados ───────────────────────────────────────────────────────
-
+  /**
+   * Permite guardar un registro de la sección activa en ese momento
+   * @param token     string    Correspondiente a la sección media de tres partes del JWT: Payload
+   * @param usuario   Usuario   Json con los datos del usuario logueado en el momento
+   * @private
+   */
   private guardarSesion(token: string, usuario: Usuario): void {
     localStorage.setItem(this.TOKEN_KEY, token);
     localStorage.setItem(this.USUARIO_KEY, JSON.stringify(usuario));

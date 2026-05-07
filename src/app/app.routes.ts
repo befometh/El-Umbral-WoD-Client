@@ -12,7 +12,7 @@ export const routes: Routes = [
       import('./features/auth/login/login').then(m => m.Login),
   },
 
-  // ── Zona del Jugador (Vástago y superiores) ───────────────────────────────
+  // ── Zona del Jugador (Vástago, ghoul y superiores) ───────────────────────────────
   {
     path: 'personaje',
     canActivate: [authGuard],
@@ -39,7 +39,7 @@ export const routes: Routes = [
       import('./features/grimorio/consulta/consulta').then(m => m.Consulta),
   },
 
-  // ── Panel del Narrador (solo Antediluviano y Matusalén) ───────────────────
+  // ── Panel del Narrador (solo roles: Antediluviano y Matusalén) ───────────────────
   {
     path: 'narrador',
     canActivate: [authGuard, rolGuard([RolUsuario.Antediluviano, RolUsuario.Matusalen])],

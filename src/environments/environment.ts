@@ -1,5 +1,5 @@
 // Entorno de DESARROLLO
-// Apunta a tu servidor Laravel local (php artisan serve)
+// Remitirse a environment.development.ts
 export const environment = {
   production: false,
   apiUrl: 'http://127.0.0.1:8000/api',

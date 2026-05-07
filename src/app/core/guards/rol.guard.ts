@@ -7,7 +7,7 @@ import { AuthService, RolUsuario } from '../services/auth';
  * Recibe los roles permitidos y comprueba si el usuario actual tiene alguno de ellos.
  *
  * Uso en rutas:
- *   canActivate: [rolGuard([RolUsuario.Antediluviano, RolUsuario.Matusalén])]
+ *   canActivate: [rolGuard([RolUsuario.Antediluviano, RolUsuario.Matusalén, ... , etc.])]
  */
 export const rolGuard = (rolesPermitidos: RolUsuario[]): CanActivateFn => {
   return () => {

@@ -1,6 +1,6 @@
 /* puntos.css */
 
-/* ─── Variables ──────────────────────────────────────────────────────────────*/
+/* Variables estandar */
 :host {
   --clr-dot-border:    rgba(61, 31, 15, 0.6);
   --clr-dot-fill:      #c8784a;
@@ -35,13 +35,13 @@
   display: block;
 }
 
-/* ─── Keyframes ──────────────────────────────────────────────────────────────*/
+/* Keyframes*/
 @keyframes dado-pulso {
   0%, 100% { transform: scale(1); }
   50%       { transform: scale(1.15); }
 }
 
-/* ─── Raíz ───────────────────────────────────────────────────────────────────*/
+/* Raíz*/
 .puntos-root {
   display: flex;
   align-items: center;
@@ -50,7 +50,7 @@
   min-height: 24px;
 }
 
-/* ─── Nombre / Label ─────────────────────────────────────────────────────────*/
+/* Nombre / Label */
 .nombre-label {
   font-family: var(--font-display), serif;
   font-size: 9px;
@@ -71,7 +71,7 @@
   transition: color 0.2s, background 0.2s, border-color 0.2s;
 }
 
-/* Con toggle activo */
+/* Opciones para el toggle activo */
 .nombre-label.toggleable {
   cursor: pointer;
 }
@@ -104,7 +104,7 @@
   border-color: var(--clr-sel2-borde);
 }
 
-/* Especialización en itálica dentro del nombre */
+/* Especialización */
 .especializacion {
   font-family: var(--font-body), serif;
   font-size: 10px;
@@ -115,7 +115,7 @@
   margin-left: 4px;
 }
 
-/* ─── Wrap de casillas ───────────────────────────────────────────────────────*/
+/* Wrap de casillas */
 .casillas-wrap {
   display: flex;
   gap: 3px;
@@ -129,7 +129,7 @@
   gap: 3px;
 }
 
-/* ─── Casilla base ───────────────────────────────────────────────────────────*/
+/* Casilla base */
 .casilla {
   display: inline-flex;
   align-items: center;
@@ -144,7 +144,7 @@
   user-select: none;
 }
 
-/* ─── Casilla: modos estándar (atributo, habilidad, disciplina, virtud, trasfondo) ──*/
+/* Casilla: modos estándar (atributo, habilidad, disciplina, virtud, trasfondo) */
 .casilla-atributo {
   border-color: rgba(61, 31, 15, 0.5);
   cursor: default;
@@ -171,7 +171,7 @@
   background: rgba(200, 120, 74, 0.25);
 }
 
-/* ─── Casilla: salud (cuadradas para el tracker de daño) ─────────────────────*/
+/* Casilla: salud (cuadradas para el tracker de daño) */
 .casilla-salud {
   border-radius: 2px;
   width: 14px;
@@ -206,7 +206,7 @@
   color: var(--clr-agravado-color);
 }
 
-/* ─── Casilla: voluntad ──────────────────────────────────────────────────────*/
+/* Casilla: voluntad */
 .casilla-voluntad {
   border-color: var(--clr-voluntad-borde);
   background: transparent;
@@ -217,7 +217,7 @@
   border-color: var(--clr-voluntad-fill);
 }
 
-/* ─── Casilla: sangre ────────────────────────────────────────────────────────*/
+/* Casilla: sangre */
 .casilla-sangre {
   border-color: var(--clr-sangre-borde);
   background: transparent;
@@ -233,9 +233,9 @@
   opacity: 0.2;
 }
 
-/* ─── Valor numérico ─────────────────────────────────────────────────────────*/
+/* Valor numérico */
 .valor-texto {
-  font-family: var(--font-display);
+  font-family: var(--font-display), serif;
   font-size: 9px;
   letter-spacing: 0.08em;
   color: #5c3d22;
@@ -248,7 +248,7 @@
   color: #8b2a2a;
 }
 
-/* ─── MODO VOLUNTAD ──────────────────────────────────────────────────────────*/
+/* MODO VOLUNTAD */
 .voluntad-root {
   flex-direction: column;
   align-items: stretch;
@@ -267,7 +267,7 @@
 }
 
 .voluntad-label em {
-  font-family: var(--font-body);
+  font-family: var(--font-body), serif;
   font-size: 10px;
   font-style: italic;
   letter-spacing: 0;
@@ -276,7 +276,7 @@
   margin-left: 4px;
 }
 
-/* ─── Dados ──────────────────────────────────────────────────────────────────*/
+/* Dados*/
 .dado-btn {
   background: transparent;
   border: 1px solid var(--clr-voluntad-borde);
@@ -318,7 +318,7 @@
   cursor: not-allowed;
 }
 
-/* ─── MODO SANGRE numérico ───────────────────────────────────────────────────*/
+/* MODO SANGRE numérico*/
 .sangre-numerica {
   display: flex;
   align-items: center;
